@@ -2,22 +2,27 @@ package app;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import javafx.geometry.Point3D;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.transform.*;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Sphere;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import lm.LeapApp;
 import lm.LeapApp.Mode;
@@ -47,7 +52,28 @@ public class MainClass extends Application implements PointMotionListener {
 	private Box box = new Box(100, 100, 100);
 	private Box floor = new Box(1000, 10, 1000);
 	private CollisionDetector collisionDetector = new CollisionDetector();
-
+	private Integer speed = 1;
+	//--------------
+	 private double mouseOldX = 0;
+     private double mouseOldY = 0;
+     private double mousePosX = 0 ;
+     private double mousePosY = 0 ;
+     private double mouseDeltaX = 0 ;
+     private double mouseDeltaY = 0 ;
+	  class Cam extends Group {
+	        Translate t  = new Translate();
+	        Translate p  = new Translate();
+	        Translate ip = new Translate();
+	        Rotate rx = new Rotate();
+	        { rx.setAxis(Rotate.X_AXIS); }
+	        Rotate ry = new Rotate();
+	        { ry.setAxis(Rotate.Y_AXIS); }
+	        Rotate rz = new Rotate();
+	        { rz.setAxis(Rotate.Z_AXIS); }
+	        Scale s = new Scale();
+	        public Cam() { super(); getTransforms().addAll(t, p, rx, rz, ry, s, ip); }
+	    }
+     private Cam cam;
 	public static void main(String[] args) {
 		LeapApp.init(true);
 		LeapApp.setMode(Mode.INTERACTION_BOX);
@@ -93,6 +119,35 @@ public class MainClass extends Application implements PointMotionListener {
 		// sceny
 		scene.setCamera(camera);
 		scene.setFill(Color.BLANCHEDALMOND);
+		//------------------------------
+		scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent me) {
+            	
+                mouseOldX = mousePosX;
+                mouseOldY = mousePosY;
+                mousePosX = me.getX();
+                mousePosY = me.getY();
+                mouseDeltaX = mousePosX - mouseOldX;
+                mouseDeltaY = mousePosY - mouseOldY;
+                if (me.isAltDown() && me.isShiftDown() && me.isPrimaryButtonDown()) {
+                    cam.rz.setAngle(cam.rz.getAngle() - mouseDeltaX);
+                }
+                else if (me.isAltDown() && me.isPrimaryButtonDown()) {
+                    cam.ry.setAngle(cam.ry.getAngle() - mouseDeltaX);
+                    cam.rx.setAngle(cam.rx.getAngle() + mouseDeltaY);
+                }
+                else if (me.isAltDown() && me.isSecondaryButtonDown()) {
+                    double scale = cam.s.getX();
+                    double newScale = scale + mouseDeltaX*0.01;
+                    cam.s.setX(newScale); cam.s.setY(newScale); cam.s.setZ(newScale);
+                }
+                else if (me.isAltDown() && me.isMiddleButtonDown()) {
+                    cam.t.setX(cam.t.getX() + mouseDeltaX);
+                    cam.t.setY(cam.t.getY() + mouseDeltaY);
+                }
+            }
+        });
+		//--------------------------------
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
@@ -134,4 +189,6 @@ public class MainClass extends Application implements PointMotionListener {
 	@Override
 	public void pointDragged(PointEvent event) {
 	}
+
+	
 }

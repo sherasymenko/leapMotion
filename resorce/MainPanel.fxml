@@ -26,7 +26,7 @@
                <children>
                   <StackPane HBox.hgrow="ALWAYS">
                      <children>
-                        <SubScene fx:id="_subscen" fill="#2b4145" height="909.0" nodeOrientation="LEFT_TO_RIGHT" width="1083.0" StackPane.alignment="CENTER">
+                        <SubScene fx:id="_subscen" depthBuffer="true" fill="#2b4145" height="909.0" nodeOrientation="LEFT_TO_RIGHT" width="1083.0" StackPane.alignment="CENTER">
                           <root>
                             <Region />
                           </root>
@@ -94,8 +94,8 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onSaveAss" text="Save Ass.." />
                     <MenuItem mnemonicParsing="false" onAction="#onClose" text="Close" />
-                        <MenuItem mnemonicParsing="false" text="Save Ass.." />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
@@ -106,7 +106,7 @@
                             <MenuItem mnemonicParsing="false" onAction="#onAddBox" text="Box" />
                               <MenuItem mnemonicParsing="false" onAction="#onAddCylinder" text="Cylinder" />
                               <MenuItem mnemonicParsing="false" onAction="#onAddSphere" text="Sphere" />
-                              <MenuItem mnemonicParsing="false" text="Custom..." />
+                              <MenuItem mnemonicParsing="false" onAction="#onAddCustom" text="Custom..." />
                           </items>
                         </Menu>
                   </items>

@@ -28,7 +28,7 @@ public void start(Stage primaryStage) throws Exception {
 	firstController.setMainScenView(this);
 	scen = new Scene(stackPanel);
 	primaryStage.setScene(scen);
-	primaryStage.setFullScreen(true);
+//	primaryStage.setFullScreen(true);
 	primaryStage.show();
 }
 

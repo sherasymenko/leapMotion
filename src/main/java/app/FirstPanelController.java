@@ -33,7 +33,6 @@ public class FirstPanelController {
 		loader.setLocation(this.getClass().getResource("/MainPanel.fxml"));
 		StackPane stackPanel = null;
 		try {
-
 			stackPanel = loader.load();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
