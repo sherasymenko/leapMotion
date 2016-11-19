@@ -2,28 +2,24 @@ package app;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.geometry.Point3D;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.util.Duration;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
-import javafx.scene.transform.*;
 import javafx.scene.SceneAntialiasing;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.util.Duration;
+
 import lm.LeapApp;
 import lm.LeapApp.Mode;
 import lm.event.PointEvent;
@@ -31,71 +27,69 @@ import lm.event.interfaces.PointMotionListener;
 import lm.fx.CollisionDetector;
 import lm.fx.HandFX3D;
 
+@SuppressWarnings("restriction")
 public class MainClass extends Application implements PointMotionListener {
 
-	private final Rotate boxRotateX = new Rotate(20, Rotate.X_AXIS);
-	private final Rotate boxRotateY = new Rotate(20, Rotate.Y_AXIS);
-	private final Rotate boxRotateZ = new Rotate(0, Rotate.Z_AXIS);
-	private final Rotate floorRotateX = new Rotate(20, Rotate.X_AXIS);
-	private final Rotate floorRotateY = new Rotate(20, Rotate.Y_AXIS);
-	private final Rotate floorRotateZ = new Rotate(0, Rotate.Z_AXIS);
+	private final Rotate rotateX = new Rotate(0, Rotate.X_AXIS);
+	private final Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
+	private final Rotate rotateZ = new Rotate(0, Rotate.Z_AXIS);
 
 	private final Group group = new Group();
 	private PerspectiveCamera camera;
 	private Scene scene;
 	private Map<Integer, HandFX3D> hands = new HashMap<Integer, HandFX3D>();
-	private final Rotate rotateX = new Rotate(0, Rotate.X_AXIS);
-	private final Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
+	private final Rotate cameraRotateX = new Rotate(-30, Rotate.X_AXIS);
+	private final Rotate cameraRotateY = new Rotate(0, Rotate.Y_AXIS);
 	private final double sceneWidth = 800;
 	private final double sceneHeight = 600;
 	private Sphere sphere = new Sphere(30);
-	private Box box = new Box(100, 100, 100);
-	private Box floor = new Box(1000, 10, 1000);
+	private Box box = new Box(50, 50, 50);
+	private Box floor = new Box(2000, 10, 2000);
+	private Box leftWall = new Box(10, 2000, 2000);
+	private Box rightWall = new Box(10, 2000, 2000);
+	private Box middleWall = new Box(2000, 2000, 10);
 	private CollisionDetector collisionDetector = new CollisionDetector();
-	private Integer speed = 1;
-	//--------------
-	 private double mouseOldX = 0;
-     private double mouseOldY = 0;
-     private double mousePosX = 0 ;
-     private double mousePosY = 0 ;
-     private double mouseDeltaX = 0 ;
-     private double mouseDeltaY = 0 ;
-	  class Cam extends Group {
-	        Translate t  = new Translate();
-	        Translate p  = new Translate();
-	        Translate ip = new Translate();
-	        Rotate rx = new Rotate();
-	        { rx.setAxis(Rotate.X_AXIS); }
-	        Rotate ry = new Rotate();
-	        { ry.setAxis(Rotate.Y_AXIS); }
-	        Rotate rz = new Rotate();
-	        { rz.setAxis(Rotate.Z_AXIS); }
-	        Scale s = new Scale();
-	        public Cam() { super(); getTransforms().addAll(t, p, rx, rz, ry, s, ip); }
-	    }
-     private Cam cam;
+
 	public static void main(String[] args) {
 		LeapApp.init(true);
 		LeapApp.setMode(Mode.INTERACTION_BOX);
 		launch(args);
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// 3D objekty aplikacji: kula, sześcian, podłoga
-		sphere.setTranslateX(0);
-		sphere.setTranslateY(-150);
-		sphere.setTranslateZ(50);
-		sphere.setMaterial(new PhongMaterial(Color.AQUA));
-		box.getTransforms().addAll(boxRotateX, boxRotateY, boxRotateZ, new Translate(0, 0, 0));
-		floor.getTransforms().addAll(floorRotateX, floorRotateY, floorRotateZ, new Translate(0, 0, 0));
-		floor.setMaterial(new PhongMaterial(Color.CORNSILK));
-		floor.setTranslateY(150);
-
+		box.getTransforms().addAll(rotateX, rotateY, rotateZ, new Translate(0, 0, 0));
+		floor.getTransforms().addAll(rotateX, rotateY, rotateZ, new Translate(0, 0, 0));
+		leftWall.getTransforms().addAll(rotateX, rotateY, rotateZ, new Translate(0, 0, 0));
+		rightWall.getTransforms().addAll(rotateX, rotateY, rotateZ, new Translate(0, 0, 0));
+		middleWall.getTransforms().addAll(rotateX, rotateY, rotateZ, new Translate(0, 0, 0));
+		
+		sphere.setMaterial(new PhongMaterial(Color.BLUEVIOLET));
+		box.setMaterial(new PhongMaterial(Color.KHAKI));
+		floor.setMaterial(new PhongMaterial(Color.AZURE));
+		leftWall.setMaterial(new PhongMaterial(Color.AZURE));
+		rightWall.setMaterial(new PhongMaterial(Color.AZURE));
+		middleWall.setMaterial(new PhongMaterial(Color.AZURE));
+		
+		floor.setTranslateY(-50);
+		leftWall.setTranslateX(-200);
+		rightWall.setTranslateX(200);
+		middleWall.setTranslateZ(50);
+		box.setTranslateZ(-100);
+		box.setTranslateX(-100);
+		box.setTranslateY(floor.getTranslateY() - (floor.getHeight() / 2) - (box.getHeight() / 2));
+		sphere.setTranslateX(100);
+		sphere.setTranslateZ(-150);
+		sphere.setTranslateY(floor.getTranslateY() - (floor.getHeight() / 2) - (sphere.getRadius()));
+		
 		// dodanie obiektów do głównej grupy obiektów aplikacji
-		group.getChildren().add(box);
 		group.getChildren().add(sphere);
+		group.getChildren().add(box);
 		group.getChildren().add(floor);
+		group.getChildren().add(leftWall);
+		group.getChildren().add(rightWall);
+		group.getChildren().add(middleWall);
 		group.setDepthTest(DepthTest.ENABLE);
 		group.setTranslateX(0);
 		group.setTranslateY(0);
@@ -109,45 +103,16 @@ public class MainClass extends Application implements PointMotionListener {
 		camera.setVerticalFieldOfView(false);
 		camera.setNearClip(0.1);
 		camera.setFarClip(10000.0);
-		camera.getTransforms().addAll(rotateX, rotateY, new Translate(0, 0, -650));
+		camera.getTransforms().addAll(cameraRotateX, cameraRotateY, new Translate(0, 0, -1000));
 		camera.setTranslateX(0);
 		camera.setTranslateZ(0);
 		camera.setTranslateY(0);
 		camera.setFieldOfView(40);
 
-		// ustawienie głownej kameery, wybór kolor tła sceny, ustawienie głownej
+		// ustawienie głownej kamery, wybór kolor tła sceny, ustawienie głownej
 		// sceny
 		scene.setCamera(camera);
 		scene.setFill(Color.BLANCHEDALMOND);
-		//------------------------------
-		scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-            	
-                mouseOldX = mousePosX;
-                mouseOldY = mousePosY;
-                mousePosX = me.getX();
-                mousePosY = me.getY();
-                mouseDeltaX = mousePosX - mouseOldX;
-                mouseDeltaY = mousePosY - mouseOldY;
-                if (me.isAltDown() && me.isShiftDown() && me.isPrimaryButtonDown()) {
-                    cam.rz.setAngle(cam.rz.getAngle() - mouseDeltaX);
-                }
-                else if (me.isAltDown() && me.isPrimaryButtonDown()) {
-                    cam.ry.setAngle(cam.ry.getAngle() - mouseDeltaX);
-                    cam.rx.setAngle(cam.rx.getAngle() + mouseDeltaY);
-                }
-                else if (me.isAltDown() && me.isSecondaryButtonDown()) {
-                    double scale = cam.s.getX();
-                    double newScale = scale + mouseDeltaX*0.01;
-                    cam.s.setX(newScale); cam.s.setY(newScale); cam.s.setZ(newScale);
-                }
-                else if (me.isAltDown() && me.isMiddleButtonDown()) {
-                    cam.t.setX(cam.t.getX() + mouseDeltaX);
-                    cam.t.setY(cam.t.getY() + mouseDeltaY);
-                }
-            }
-        });
-		//--------------------------------
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
@@ -158,6 +123,7 @@ public class MainClass extends Application implements PointMotionListener {
 
 	// metoda umożliwiająca działanie animacji, czyli płynna zmiana pozycji rąk
 	// w czasie
+	@SuppressWarnings("restriction")
 	private void synchronizeWithLeapMotion() {
 		Timeline timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
@@ -168,27 +134,32 @@ public class MainClass extends Application implements PointMotionListener {
 	// metoda identyfikuje ręce oraz ciągle aktualizuje ich położenie,
 	// przy czym sprawdza czy zaszła kolizja między rękami a obiektami
 	@Override
+	@SuppressWarnings("restriction")
 	public void pointMoved(PointEvent event) {
 		int handId = event.getSource().id();
 		HandFX3D hand = hands.get(handId);
+
 		if (event.leftViewPort()) {
 			hands.remove(handId);
 			group.getChildren().remove(hand);
 		} else if (hand == null) {
 			hand = new HandFX3D(handId);
 			hands.put(handId, hand);
+			hand.setTranslateZ(-50);
+
 			group.getChildren().add(hand);
 		}
 		if (hand != null) {
 			hand.update(LeapApp.getController().frame().hand(handId));
-			collisionDetector.checkCollisionWithSphere(hand, sphere, box);
-			collisionDetector.checkCollisionWithBox(hand, box);
+			collisionDetector.checkCollisionWithObject(hand, sphere, floor, box);
+			collisionDetector.checkCollisionWithObject(hand, box, floor, sphere);
+			collisionDetector.checkCollisionWithBoxAndSphere(box, sphere);
+			collisionDetector.setObjectInsideRoom(box, floor, leftWall, rightWall, middleWall);
+			collisionDetector.setObjectInsideRoom(sphere, floor, leftWall, rightWall, middleWall);
 		}
 	}
 
 	@Override
 	public void pointDragged(PointEvent event) {
 	}
-
-	
 }

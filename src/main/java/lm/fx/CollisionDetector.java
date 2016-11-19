@@ -1,94 +1,151 @@
+
 package lm.fx;
 
+import javafx.scene.shape.Shape3D;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Shape3D;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.scene.transform.*;
 
 public class CollisionDetector {
-	private PhongMaterial phongMaterial = new PhongMaterial();
+	boolean boxUnderSphere = false;
+	boolean sphereUnderBox = false;
 
-	// sprawdzenie czy zasz�a kolozja mi�dzy r�kami a kul�
-	public void checkCollisionWithSphere(HandFX3D hand, Sphere sphere, Box box) {
-		boolean collisionDetected = false;
-		List<Double> handTranslatesX = hand.getTranslatesX();
-		List<Double> handTranslatesY = hand.getTranslatesY();
-		List<Double> handTranslatesZ = hand.getTranslatesZ();
-
-		Double liczbaOdX = sphere.getTranslateX() - sphere.getRadius();
-		Double liczbaDoX = sphere.getTranslateX() + sphere.getRadius();
-		Double liczbaOdY = sphere.getTranslateY() - sphere.getRadius();
-		Double liczbaDoY = sphere.getTranslateY() + sphere.getRadius();
-		Double liczbaOdZ = sphere.getTranslateZ() - sphere.getRadius();
-		Double liczbaDoZ = sphere.getTranslateZ() + sphere.getRadius();
-		for (int k = 0; k < handTranslatesX.size(); k++) {
-			if ((handTranslatesX.get(k) > liczbaOdX && handTranslatesX.get(k) < liczbaDoX)
-					&& (handTranslatesY.get(k) > liczbaOdY && handTranslatesY.get(k) < liczbaDoY)
-					&& (handTranslatesZ.get(k) > liczbaOdZ && handTranslatesZ.get(k) < liczbaDoZ)) {
-				collisionDetected = true;
-			}
+	// sprawdza czy objekt nie przekracza ścian, jesli tak to położenie objektu
+	// jest ustawiane koło ściany
+	@SuppressWarnings("restriction")
+	public void setObjectInsideRoom(Shape3D object, Box floor, Box leftWall, Box rightWall, Box middleWall) {
+		double height = 0;
+		double width = 0;
+		if (object instanceof Box) {
+			height = ((Box) object).getHeight();
+			width = ((Box) object).getWidth();
+		} else if (object instanceof Sphere) {
+			height = ((Sphere) object).getRadius() * 2;
+			width = ((Sphere) object).getRadius() * 2;
 		}
-		if (collisionDetected) {
-			phongMaterial.setSpecularColor(Color.color(rand(), rand(), rand()));
-			phongMaterial.setDiffuseColor(Color.color(rand(), rand(), rand()));
-			box.setMaterial(phongMaterial);
+		if (object.getBoundsInParent().intersects(floor.getBoundsInParent())) {
+			object.setTranslateY(floor.getTranslateY() - (floor.getHeight() / 2) - (height / 2));
+		}
+
+		if (object.getBoundsInParent().intersects(leftWall.getBoundsInParent())) {
+			object.setTranslateX(leftWall.getTranslateX() + (leftWall.getWidth() / 2) + (width / 2));
+		}
+
+		if (object.getBoundsInParent().intersects(rightWall.getBoundsInParent())) {
+			object.setTranslateX(rightWall.getTranslateX() - (rightWall.getWidth() / 2) - (width / 2));
+		}
+
+		if (object.getBoundsInParent().intersects(middleWall.getBoundsInParent())) {
+			object.setTranslateZ(leftWall.getTranslateZ() + (leftWall.getDepth() / 2) + (width / 2));
 		}
 	}
 
-	public double rand() {
-		Random random = new Random();
-		return random.nextDouble();
-	}
-	// sprawdzenie czy zasz�a kolozja mi�dzy r�kami a sze�cianem
-	public void checkCollisionWithBox(HandFX3D hand, Box box) {
-		boolean collisionDetected = false;
-		Double collisionPointX = 0.0;
-		List<Double> handTranslatesX = hand.getTranslatesX();
-		List<Double> handTranslatesY = hand.getTranslatesY();
-		List<Double> handTranslatesZ = hand.getTranslatesZ();
-
-		Double liczbaOdX = box.getTranslateX() - box.getWidth() / 2;
-		Double liczbaDoX = box.getTranslateX() + box.getWidth() / 2;
-		Double liczbaOdY = box.getTranslateY() - box.getWidth() / 2;
-		Double liczbaDoY = box.getTranslateY() + box.getWidth() / 2;
-		Double liczbaOdZ = box.getTranslateZ() - box.getWidth() / 2;
-		Double liczbaDoZ = box.getTranslateZ() + box.getWidth() / 2;
-		
-		for (int j = 0; j < handTranslatesX.size(); j++) {
-			if ((handTranslatesX.get(j) > liczbaOdX && handTranslatesX.get(j) < liczbaDoX)
-					&& (handTranslatesY.get(j) > liczbaOdY && handTranslatesY.get(j) < liczbaDoY)
-					&& (handTranslatesZ.get(j) > liczbaOdZ && handTranslatesZ.get(j) < liczbaDoZ)) {
-				collisionDetected = true;
-				collisionPointX = handTranslatesX.get(j);
-			}
+	// sprawdzenie czy zaszła kolozja między rękami a objektem
+	@SuppressWarnings("restriction")
+	public void checkCollisionWithObject(HandFX3D hand, Shape3D object1, Box floor, Shape3D object2) {
+		double objectHeight = 0;
+		if (object1 instanceof Box) {
+			objectHeight = ((Box) object1).getHeight();
+		} else if (object1 instanceof Sphere) {
+			objectHeight = ((Sphere) object1).getRadius() * 2;
 		}
-		 
-	/*Sphere palm = hand.getPalm();
-			box.setTranslateX(hand.getPalm().getTranslateX());
-			box.setTranslateY(hand.getPalm().getTranslateY()+box.getWidth()/2+hand.getPalm().getRadius());
-			box.setTranslateZ(hand.getPalm().getTranslateZ());
-			
-			
-			 final Rotate boxRotateX = new Rotate(palm.getRotationAxis().getX(), Rotate.X_AXIS);
-			 final Rotate boxRotateY = new Rotate(palm.getRotationAxis().getY(), Rotate.Y_AXIS);
-			 final Rotate boxRotateZ = new Rotate(palm.getRotationAxis().getZ(), Rotate.Z_AXIS);
-			System.out.println("test 1  " +palm.getRotationAxis().getX());
-			
-			box.getTransforms().remove(0, box.getTransforms().size()-1);
-			
-			box.getTransforms().addAll(boxRotateX, boxRotateY, boxRotateZ, new Translate(0, 0, 0));*/
-			//System.out.println("test 2  " +box.getTransforms() );
-		if (collisionDetected) {
-			if (collisionPointX < box.getTranslateX()) {
-				box.setTranslateX(box.getTranslateX() + 0.3);
+		if ((object1.getBoundsInParent().intersects(hand.getBoundsInParent())
+				|| (object1.getBoundsInParent().intersects(hand.getFingers()[0].getBoundsInParent())
+						&& object1.getBoundsInParent().intersects(hand.getFingers()[1].getBoundsInParent()))
+				|| object1.getBoundsInParent().intersects(hand.getInvisibleBone().getBoundsInParent()))
+				&& !handIsStraight(hand)) {
+			object1.setTranslateX(hand.getPalm().getTranslateX());
+			object1.setTranslateY(hand.getPalm().getTranslateY());
+			object1.setTranslateZ(hand.getPalm().getTranslateZ());
+		} else if (object1.getTranslateY() != (floor.getTranslateY() - (floor.getHeight() / 2) - (objectHeight / 2))) {
+			double objectHeightFinal = objectHeight;
+			Timeline timeline = new Timeline();
+			timeline.setCycleCount(Timeline.INDEFINITE);
+			timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1.0 / 60.0), ea -> {
+				Box box;
+				Sphere sphere;
+				if (object1 instanceof Box) {
+					box = (Box) object1;
+					sphere = (Sphere) object2;
+
+				} else {
+					box = (Box) object2;
+					sphere = (Sphere) object1;
+				}
+
+				if (object1.getBoundsInParent().intersects(floor.getBoundsInParent())) {
+					object1.setTranslateY(floor.getTranslateY() - (floor.getHeight() / 2) - (objectHeightFinal / 2));
+				} else if (checkCollisionWithBoxAndSphere(box, sphere)) {
+					boxUnderSphere = false;
+					sphereUnderBox = false;
+				} else {
+					object1.setTranslateY(object1.getTranslateY() + 0.05);
+				}
+			}));
+			timeline.play();
+		}
+	}
+
+	@SuppressWarnings("restriction")
+	// sprawdza czy zaszła kolizja pomiędzy sześcianem a kulą
+	public boolean checkCollisionWithBoxAndSphere(Box box, Sphere sphere) {
+		boolean collision = false;
+		if (box.getBoundsInParent().intersects(sphere.getBoundsInParent())) {
+			if (box.getTranslateY() < sphere.getTranslateY()) {
+				box.setTranslateY(sphere.getTranslateY() - (sphere.getRadius()) - (box.getHeight() / 2) - 0.01);
+				boxUnderSphere = true;
+			} else if (box.getTranslateY() > sphere.getTranslateY()) {
+				sphere.setTranslateY(box.getTranslateY() - (box.getHeight() / 2) - (sphere.getRadius()) - 0.01);
+				sphereUnderBox = true;
 			} else {
-				box.setTranslateX(box.getTranslateX() - 0.3);
+				collision = false;
+				boxUnderSphere = false;
+				sphereUnderBox = false;
+			}
+			collision = true;
+		}
+		return collision;
+	}
+
+	// sprawdza czy ręka jest wyprostowana
+	@SuppressWarnings("restriction")
+	public boolean handIsStraight(HandFX3D hand) {
+		boolean isStraight = false;
+		for (int i = 0; i < 5; i++) {
+			Sphere[] proximal = hand.getProximal();
+			Sphere[] fingers = hand.getFingers();
+			Sphere[] distal = hand.getDistal();
+			if (isBetween(proximal[i].getTranslateX(), fingers[i].getTranslateX(), distal[i].getTranslateX())
+					&& isBetween(proximal[i].getTranslateY(), fingers[i].getTranslateY(), distal[i].getTranslateY())
+					&& isBetween(proximal[i].getTranslateZ(), fingers[i].getTranslateZ(), distal[i].getTranslateZ())) {
+				isStraight = true;
 			}
 		}
+		return isStraight;
+	}
+
+	public Double distance(Double start, Double end) {
+		if (start > end) {
+			return start - end;
+		} else {
+			return end - start;
+		}
+	}
+
+	public boolean isBetween(Double start, Double end, Double middle) {
+		return distance(start, middle) + distance(middle, end) == distance(start, end);
 	}
 }

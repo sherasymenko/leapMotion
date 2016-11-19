@@ -57,5 +57,12 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/LeapJava.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>com.interactivemesh.jfx.importer.stl</groupId>
+			<artifactId>StlMeshImporter</artifactId>
+			<version>2.1.5</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/jimStlMeshImporterJFX.jar</systemPath>
+		</dependency>
 	</dependencies>
 </project>
