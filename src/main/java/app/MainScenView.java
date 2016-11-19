@@ -20,7 +20,6 @@ public class MainScenView  extends Application{
 @Override
 public void start(Stage primaryStage) throws Exception {
 
-			// synchronizacja z LeapMotion
 	FXMLLoader loader = new FXMLLoader();
 	loader.setLocation(this.getClass().getResource("/FirstPanel.fxml"));
 	StackPane stackPanel = loader.load();
@@ -28,7 +27,7 @@ public void start(Stage primaryStage) throws Exception {
 	firstController.setMainScenView(this);
 	scen = new Scene(stackPanel);
 	primaryStage.setScene(scen);
-//	primaryStage.setFullScreen(true);
+	primaryStage.setFullScreen(true);
 	primaryStage.show();
 }
 

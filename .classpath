@@ -24,5 +24,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/home/ariel/workspace/leapMotion/stl/jimStlMeshImporterJFX.jar"/>
+	<classpathentry kind="lib" path="/home/ariel/workspace/leapMotion/lib/java-json.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
