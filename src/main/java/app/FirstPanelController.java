@@ -6,6 +6,7 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 public class FirstPanelController {
 	
@@ -19,16 +20,19 @@ public class FirstPanelController {
 	@FXML
 	void onExit() {
 
+		System.exit(0);
 	}
 
 	@FXML
-	void onLoad() {
-
+	void onLoad() throws Exception {
+		
+		Process proc = Runtime.getRuntime().exec("java -jar D:\\zpp_workspace\\plik_uruchamiający\\LMApplication-0.0.1-SNAPSHOT.jar");
+		System.exit(0);
 	}
 
 	@FXML
-	void onStart() {
-
+	void onStart() throws IOException {
+		
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/MainPanel.fxml"));
 		StackPane stackPanel = null;

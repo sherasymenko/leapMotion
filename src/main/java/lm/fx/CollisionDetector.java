@@ -2,6 +2,10 @@
 package lm.fx;
 
 import javafx.scene.shape.Shape3D;
+import javafx.scene.Scene;
+//import java.awt.event.KeyEvent;
+import javafx.animation.RotateTransition;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +17,14 @@ import javafx.util.Duration;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Shape3D;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.scene.transform.*;
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
 
 public class CollisionDetector {
 	boolean boxUnderSphere = false;
@@ -51,6 +58,70 @@ public class CollisionDetector {
 		if (object.getBoundsInParent().intersects(middleWall.getBoundsInParent())) {
 			object.setTranslateZ(leftWall.getTranslateZ() + (leftWall.getDepth() / 2) + (width / 2));
 		}
+	}
+
+	@SuppressWarnings("restriction")
+	public void checkCollisionWithObjects(HandFX3D hand, List<MeshView> meshViewTable, Scene scene) {
+		MeshView test = new MeshView();
+		for (MeshView m : meshViewTable) {
+
+			if ((m.getBoundsInParent().intersects(hand.getBoundsInParent())
+					|| (m.getBoundsInParent().intersects(hand.getFingers()[0].getBoundsInParent())
+							&& m.getBoundsInParent().intersects(hand.getFingers()[1].getBoundsInParent()))
+					|| m.getBoundsInParent().intersects(hand.getInvisibleBone().getBoundsInParent()))
+					&& !handIsStraight(hand)) {
+				test = m;
+				break;
+			}
+		}
+
+		if (test != null) {
+			test.setTranslateX(hand.getPalm().getTranslateX());
+			test.setTranslateY(hand.getPalm().getTranslateY());
+			test.setTranslateZ(hand.getPalm().getTranslateZ());
+			final MeshView testFinal = test;
+			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					Rotate rotateX = new Rotate(testFinal.getRotationAxis().getX(), Rotate.X_AXIS);
+					Rotate rotateY = new Rotate(testFinal.getRotationAxis().getY(), Rotate.Y_AXIS);
+					Rotate rotateZ = new Rotate(testFinal.getRotationAxis().getZ(), Rotate.Z_AXIS);
+					switch (event.getCode()) {
+					case UP:
+						rotateX = new Rotate(testFinal.getRotate() + 1, Rotate.X_AXIS);
+						System.out.println("UP");
+						break;
+					case DOWN:
+						rotateX = new Rotate(testFinal.getRotate() - 1, Rotate.X_AXIS);
+						System.out.println("DOWN");
+						break;
+					case LEFT:
+						rotateY = new Rotate(testFinal.getRotationAxis().getY() + 1, Rotate.Y_AXIS);
+						System.out.println("LEFT");
+						break;
+					case RIGHT:
+						rotateY = new Rotate(testFinal.getRotationAxis().getY() - 1, Rotate.Y_AXIS);
+						System.out.println("RIGHT");
+						break;
+					case X:
+						rotateX = new Rotate(testFinal.getRotationAxis().getX() + 1, Rotate.X_AXIS);
+						System.out.println("X");
+						break;
+					case Y:
+						rotateY = new Rotate(testFinal.getRotationAxis().getY() + 1, Rotate.Y_AXIS);
+						System.out.println("Y");
+						break;
+					case Z:
+						rotateZ = new Rotate(testFinal.getRotationAxis().getZ() + 1, Rotate.Z_AXIS);
+						System.out.println("Z");
+						break;
+					}
+					testFinal.getTransforms().addAll(rotateX, rotateY, rotateZ, new Translate(0, 0, 0));
+				}
+			});
+
+		}
+
 	}
 
 	// sprawdzenie czy zaszła kolozja między rękami a objektem
@@ -148,4 +219,28 @@ public class CollisionDetector {
 	public boolean isBetween(Double start, Double end, Double middle) {
 		return distance(start, middle) + distance(middle, end) == distance(start, end);
 	}
+
+	/*
+	 * @Override public void keyTyped(KeyEvent e) { // TODO Auto-generated
+	 * method stub
+	 * 
+	 * }
+	 * 
+	 * @Override public void keyPressed(KeyEvent e) { int key = e.getKeyCode();
+	 * 
+	 * if (key == KeyEvent.VK_LEFT) { System.out.println("VK_LEFT"); }
+	 * 
+	 * if (key == KeyEvent.VK_RIGHT) { System.out.println("VK_RIGHT"); }
+	 * 
+	 * if (key == KeyEvent.VK_UP) { System.out.println("VK_UP"); }
+	 * 
+	 * if (key == KeyEvent.VK_DOWN) { System.out.println("VK_DOWN"); }
+	 * 
+	 * }
+	 * 
+	 * @Override public void keyReleased(KeyEvent e) { // TODO Auto-generated
+	 * method stub
+	 * 
+	 * }
+	 */
 }
