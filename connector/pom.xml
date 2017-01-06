@@ -9,9 +9,9 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>LeapMotionProject</groupId>
-	<artifactId>connector</artifactId>
+	<artifactId>start</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>connector</name>
+	<name>start</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,6 +24,7 @@
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
+		 <finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

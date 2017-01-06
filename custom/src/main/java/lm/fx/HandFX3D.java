@@ -3,25 +3,26 @@ package lm.fx;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javafx.scene.shape.Shape3D;
-import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Rotate;
 
 import com.leapmotion.leap.Bone.Type;
 import com.leapmotion.leap.Finger;
 import com.leapmotion.leap.Hand;
 import com.leapmotion.leap.Vector;
 
+import javafx.geometry.Point3D;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Cylinder;
+import javafx.scene.shape.Shape3D;
+import javafx.scene.shape.Sphere;
+import javafx.scene.transform.Rotate;
+
+@SuppressWarnings("restriction")
 public class HandFX3D extends Group {
-	
-	// poszczegďż˝lne czďż˝ci rďż˝ki
+
+	// poszczegolne czesci reki
 	private Sphere palm;
 	private Sphere metacarpal;
 	private Sphere[] fingers = new Sphere[5];
@@ -35,21 +36,17 @@ public class HandFX3D extends Group {
 
 	private List<JointFX3D> joints = new ArrayList<JointFX3D>();
 
-	// tworzenie rďż˝ki: na miejscu kostek sďż˝ tworzone kule,
-	// ktďż˝re sďż˝ poďż˝ďż˝czone cylindrami,
-	// co upodabnia wyglďż˝d konstrukcji do rďż˝ki
+	// tworzenie reki: na miejscu kostek sa tworzone kule,
+	// ktore sa polaczone cylindrami,
+	// co upodabnia wyglad konstrukcji do reki
 	public HandFX3D(int handId) {
 		palm = createSphere();
 		metacarpal = createSphere();
 		for (int i = 0; i < fingers.length; i++) {
 			fingers[i] = createSphere();
-		//	fingers[i].setMaterial(new PhongMaterial(Color.RED));
 			distal[i] = createSphere();
-			//distal[i].setMaterial(new PhongMaterial(Color.GREEN));
 			intermediate[i] = createSphere();
-			//intermediate[i].setMaterial(new PhongMaterial(Color.BLACK));
 			proximal[i] = createSphere();
-			//proximal[i].setMaterial(new PhongMaterial(Color.YELLOW));
 			getChildren().addAll(fingers[i], distal[i], proximal[i], intermediate[i]);
 		}
 		sphereList.add(palm);
@@ -63,15 +60,14 @@ public class HandFX3D extends Group {
 			sphereList.add(distal[i]);
 			sphereList.add(intermediate[i]);
 
-		}fingers[0].setMaterial(new PhongMaterial(Color.WHITE));
+		}
+		fingers[0].setMaterial(new PhongMaterial(Color.WHITE));
 		connectSpheres(proximal[1], proximal[2], true);
 		connectSpheres(proximal[2], proximal[3], true);
 		connectSpheres(proximal[3], proximal[4], true);
 		connectSpheres(proximal[0], proximal[1], true);
 		connectSpheres(proximal[0], metacarpal, true);
 		connectSpheres(metacarpal, proximal[4], true);
-		//connectSpheres(metacarpal, palm, true);
-		
 		connectSpheres(fingers[0], palm, false);
 	}
 
@@ -85,15 +81,13 @@ public class HandFX3D extends Group {
 	}
 
 	private void connectSpheres(Sphere fromSphere, Sphere toSphere, boolean visible) {
-		
-		
-		JointFX3D jointFX3D = new JointFX3D(fromSphere, toSphere,visible,object);
+		JointFX3D jointFX3D = new JointFX3D(fromSphere, toSphere, visible, object);
 		joints.add(jointFX3D);
 		getChildren().add(jointFX3D.getBone());
-		
+
 	}
 
-	// metoda aktualizuje poďż˝oďż˝enie rďż˝ki
+	// metoda aktualizuje polozenie reki
 	public void update(Hand hand) {
 		transform(palm, hand.palmPosition());
 		Iterator<Finger> itFinger = hand.fingers().iterator();
@@ -108,7 +102,7 @@ public class HandFX3D extends Group {
 		transform(metacarpal, finger.bone(Type.TYPE_METACARPAL).prevJoint());
 		for (JointFX3D joint : joints) {
 			joint.update();
-			if(joint.getInvisibleBone()!=null){
+			if (joint.getInvisibleBone() != null) {
 				setHandRotate(joint.getJoint());
 				setInvisibleBone(joint.getInvisibleBone());
 			}
@@ -121,52 +115,21 @@ public class HandFX3D extends Group {
 		node.setTranslateZ(-vector.getZ());
 	}
 
-	// metody getTranslates... zwracajďż˝ listy spďż˝rzďż˝dnych kaďż˝dej czďż˝ci rďż˝ki
-	public List<Double> getTranslatesX() {
-		List<Double> translatesList = new ArrayList<Double>();
-		for (Iterator i = sphereList.iterator(); i.hasNext();) {
-			Sphere sphere = (Sphere) i.next();
-			translatesList.add(sphere.getTranslateX());
-		}
-		return translatesList;
-	}
-
-	public List<Double> getTranslatesY() {
-		List<Double> translatesList = new ArrayList<Double>();
-		for (Iterator i = sphereList.iterator(); i.hasNext();) {
-			Sphere sphere = (Sphere) i.next();
-			translatesList.add(sphere.getTranslateY());
-		}
-		return translatesList;
-	}
-
-	public List<Double> getTranslatesZ() {
-		List<Double> translatesList = new ArrayList<Double>();
-		for (Iterator i = sphereList.iterator(); i.hasNext();) {
-			Sphere sphere = (Sphere) i.next();
-			translatesList.add(sphere.getTranslateZ());
-		}
-		return translatesList;
-	}
-
 	// laczenie czesci
 	private class JointFX3D {
 		private Sphere fromSphere;
 		private Sphere toSphere;
 		private Cylinder bone;
-		private Shape3D object;
 		private Rotate joint;
 		Boolean visible;
-		
 		private Cylinder invisibleBone;
 
-		public JointFX3D(Sphere fromSphere, Sphere toSphere,Boolean visible, Shape3D object) {
+		public JointFX3D(Sphere fromSphere, Sphere toSphere, Boolean visible, Shape3D object) {
 			this.fromSphere = fromSphere;
 			this.toSphere = toSphere;
 			this.joint = new Rotate();
 			this.bone = createBone(joint);
 			this.visible = visible;
-			this.object = object;
 		}
 
 		private Cylinder createBone(Rotate joint) {
@@ -179,14 +142,11 @@ public class HandFX3D extends Group {
 			cylinder.getTransforms().add(joint);
 			return cylinder;
 		}
-		
-		
 
 		public void update() {
 			double dx = (float) (fromSphere.getTranslateX() - toSphere.getTranslateX());
 			double dy = (float) (fromSphere.getTranslateY() - toSphere.getTranslateY());
 			double dz = (float) (fromSphere.getTranslateZ() - toSphere.getTranslateZ());
-			
 			bone.setHeight(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2)));
 			bone.setTranslateX(fromSphere.getTranslateX());
 			bone.setTranslateY(fromSphere.getTranslateY() - bone.getHeight() / 2);
@@ -195,13 +155,11 @@ public class HandFX3D extends Group {
 			joint.setAxis(new Point3D(dz, 0, -dx));
 			joint.setAngle(180 - new Point3D(dx, -dy, dz).angle(Rotate.Y_AXIS));
 			bone.setRotate(joint.determinant());
-			   bone.setVisible(visible);
-			   
-			   if(!visible){
-				   setInvisibleBone(bone);
-				  
-			   }
-			
+			bone.setVisible(visible);
+			if (!visible) {
+				setInvisibleBone(bone);
+			}
+
 		}
 
 		public Sphere getFromSphere() {
@@ -251,8 +209,6 @@ public class HandFX3D extends Group {
 		public void setInvisibleBone(Cylinder invisibleBone) {
 			this.invisibleBone = invisibleBone;
 		}
-
-		
 	}
 
 	public Sphere getPalm() {
@@ -286,9 +242,11 @@ public class HandFX3D extends Group {
 	public void setDistal(Sphere[] distal) {
 		this.distal = distal;
 	}
+
 	public Sphere[] getDistal() {
 		return distal;
 	}
+
 	public Sphere[] getProximal() {
 		return proximal;
 	}
@@ -336,5 +294,4 @@ public class HandFX3D extends Group {
 	public void setHandRotate(Rotate handRotate) {
 		this.handRotate = handRotate;
 	}
-	
 }

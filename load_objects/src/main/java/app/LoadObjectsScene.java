@@ -38,7 +38,7 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 	private final double sceneWidth = 800;
 	private final double sceneHeight = 600;
 	private final XformCamera cameraXform = new XformCamera();
-	private static final double CAMERA_INITIAL_DISTANCE = -1000;
+	private static final double CAMERA_INITIAL_DISTANCE = -400;
 	private static final double CAMERA_NEAR_CLIP = 0.1;
 	private static final double CAMERA_FAR_CLIP = 10000.0;
 	private CollisionDetector collisionDetector = new CollisionDetector();
@@ -89,7 +89,6 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 	public void pointMoved(PointEvent event) {
 		int handId = event.getSource().id();
 		HandFX3D hand = hands.get(handId);
-
 		if (event.leftViewPort()) {
 			hands.remove(handId);
 			group.getChildren().remove(hand);
@@ -97,7 +96,6 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 			hand = new HandFX3D(handId);
 			hands.put(handId, hand);
 			hand.setTranslateZ(-50);
-
 			group.getChildren().add(hand);
 		}
 		if (hand != null) {
@@ -119,7 +117,7 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 		camera.getTransforms().addAll(new Translate(0, 0, -1000));
 		camera.setTranslateX(0);
 		camera.setTranslateZ(0);
-		camera.setTranslateY(0);
+		camera.setTranslateY(-300);
 		camera.setFieldOfView(40);
 		group.getChildren().add(cameraXform);
 		cameraXform.getChildren().add(camera);
@@ -131,7 +129,6 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 
 	private void mouseSetting() {
 		scene.setOnMousePressed((MouseEvent me) -> {
-			System.out.println("setOnMousePressed");
 			mousePosX = me.getSceneX();
 			mousePosY = me.getSceneY();
 			mouseOldX = me.getSceneX();
@@ -145,16 +142,11 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 			mouseDeltaX = (mousePosX - mouseOldX);
 			mouseDeltaY = (mousePosY - mouseOldY);
 			if (me.isPrimaryButtonDown()) {
-				System.out.println("setOnMouseDragged1");
 				cameraXform.ry(mouseDeltaX * 180.0 / scene.getWidth());
-				cameraXform.rx(-mouseDeltaY * 180.0 / scene.getHeight());
 			} else if (me.isSecondaryButtonDown()) {
-				System.out.println("setOnMouseDragged2");
 				camera.setTranslateZ(camera.getTranslateZ() + mouseDeltaY);
 			}
-
 		});
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -181,7 +173,7 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 		for (int i = 0; i < meshViewTable.size(); i++) {
 			MeshView m = meshViewTable.get(i);
 			m.setTranslateZ(-100);
-			m.setTranslateX(-100);
+			m.setTranslateY(-100);
 			group.getChildren().add(m);
 		}
 	}

@@ -51,28 +51,34 @@ public class CollisionDetector {
 		}
 	}
 
+	MeshView meshView = null;
+	int index = -1;
+
 	@SuppressWarnings("restriction")
 	public void checkCollisionWithObjects(HandFX3D hand, List<MeshView> meshViewTable, Scene scene, Group group) {
-		MeshView test = new MeshView();
-		// Group group = new Group();
 		for (int i = 0; i < meshViewTable.size(); i++) {
 			MeshView m = meshViewTable.get(i);
-			if ((m.getBoundsInParent().intersects(hand.getBoundsInParent())
-					|| (m.getBoundsInParent().intersects(hand.getFingers()[0].getBoundsInParent())
-							&& m.getBoundsInParent().intersects(hand.getFingers()[1].getBoundsInParent()))
-					|| m.getBoundsInParent().intersects(hand.getInvisibleBone().getBoundsInParent()))
-					&& !handIsStraight(hand)) {
-				test = m;
-				// group = groupList.get(i);
-				break;
+			if (index == -1 || index == i) {
+				if ((m.getBoundsInParent().intersects(hand.getBoundsInParent())
+						|| (m.getBoundsInParent().intersects(hand.getFingers()[0].getBoundsInParent())
+								&& m.getBoundsInParent().intersects(hand.getFingers()[1].getBoundsInParent()))
+						|| m.getBoundsInParent().intersects(hand.getInvisibleBone().getBoundsInParent()))
+						&& !handIsStraight(hand)) {
+					meshView = m;
+					index = i;
+					break;
+				} else {
+					meshView = null;
+					index = -1;
+				}
 			}
 		}
 
-		if (test != null) {
-			test.setTranslateX(hand.getPalm().getTranslateX());
-			test.setTranslateY(hand.getPalm().getTranslateY());
-			test.setTranslateZ(hand.getPalm().getTranslateZ());
-			final MeshView testFinal = test;
+		if (meshView != null) {
+			meshView.setTranslateX(hand.getPalm().getTranslateX());
+			meshView.setTranslateY(hand.getPalm().getTranslateY());
+			meshView.setTranslateZ(hand.getPalm().getTranslateZ());
+			final MeshView meshViewFinal = meshView;
 			final Group groupFinal = group;
 			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 				@Override
@@ -80,7 +86,6 @@ public class CollisionDetector {
 					Rotate rxBox = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
 					Rotate ryBox = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
 					Rotate rzBox = new Rotate(0, 0, 0, 0, Rotate.Z_AXIS);
-
 					rxBox.setAngle(0);
 					ryBox.setAngle(0);
 					rzBox.setAngle(0);
@@ -101,21 +106,19 @@ public class CollisionDetector {
 						ryBox.setAngle(-3);
 						System.out.println("RIGHT");
 						break;
-					case Z:
+					case COMMA:
 						rzBox.setAngle(3);
-						System.out.println("X");
+						System.out.println("COMMA");
 						break;
-					case X:
+					case PERIOD:
 						rzBox.setAngle(-3);
-						System.out.println("Y");
+						System.out.println("PERIOD");
 						break;
 					}
-					testFinal.getTransforms().addAll(rxBox, ryBox, rzBox);
+					meshViewFinal.getTransforms().addAll(rxBox, ryBox, rzBox);
 				}
 			});
-
 		}
-
 	}
 
 	// sprawdzenie czy zaszła kolozja między rękami a objektem
@@ -199,6 +202,7 @@ public class CollisionDetector {
 				isStraight = true;
 			}
 		}
+
 		return isStraight;
 	}
 
