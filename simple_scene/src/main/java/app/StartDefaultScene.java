@@ -144,7 +144,6 @@ public class StartDefaultScene extends Application implements PointMotionListene
 			hand.update(LeapApp.getController().frame().hand(handId));
 			collisionDetector.checkCollisionWithObject(hand, sphere, floor, box);
 			collisionDetector.checkCollisionWithObject(hand, box, floor, sphere);
-			//collisionDetector.checkCollisionWithBoxAndSphere(box, sphere);
 			collisionDetector.setObjectInsideRoom(box, floor, leftWall, rightWall, middleWall);
 			collisionDetector.setObjectInsideRoom(sphere, floor, leftWall, rightWall, middleWall);
 		}
