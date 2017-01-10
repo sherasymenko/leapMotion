@@ -135,10 +135,10 @@ public class CollisionDetector {
 		return collision;
 	}
 
-	// sprawdzenie kolizji pomiędzy ręką a wgranymi obiektami
-	public void checkCollisionWithObjects(HandFX3D hand, List<MeshView> meshViewTable, Scene scene, Group group) {
-		for (int i = 0; i < meshViewTable.size(); i++) {
-			MeshView m = meshViewTable.get(i);
+	// sprawdzenie czy zaszła kolizja pomiędzy ręką a wgranymi obiektami
+	public void checkCollisionWithLoadObjects(HandFX3D hand, List<MeshView> meshList, Scene s) {
+		for (int i = 0; i < meshList.size(); i++) {
+			MeshView m = meshList.get(i);
 			// poszukiwanie obiektu, którego dotyka ręka, przy czym ręka nie
 			// może być wyprostowana
 			if (index == -1 || index == i) {
@@ -158,9 +158,16 @@ public class CollisionDetector {
 				}
 			}
 		}
+		// sterowanie obiektem
+		controlObject(s, hand, meshView);
+	}
+
+	// sterowanie obiektem
+	public void controlObject(Scene scene, HandFX3D hand, MeshView meshView) {
 		if (meshView != null) {
 			// jeżeli ręka trzyma jakiś obiekt to jego położenie jest ustawiane
-			// na takie, jakie ma środek dłoni ręki
+			// na takie, jakie ma środek dłoni ręki, obiekt się przemieszcza
+			// razem z ręką
 			meshView.setTranslateX(hand.getPalm().getTranslateX());
 			meshView.setTranslateY(hand.getPalm().getTranslateY());
 			meshView.setTranslateZ(hand.getPalm().getTranslateZ());
@@ -171,39 +178,33 @@ public class CollisionDetector {
 				@SuppressWarnings("incomplete-switch")
 				@Override
 				public void handle(KeyEvent event) {
-					Rotate rxBox = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
-					Rotate ryBox = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
-					Rotate rzBox = new Rotate(0, 0, 0, 0, Rotate.Z_AXIS);
-					rxBox.setAngle(0);
-					ryBox.setAngle(0);
-					rzBox.setAngle(0);
+					Rotate rx = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
+					Rotate ry = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
+					Rotate rz = new Rotate(0, 0, 0, 0, Rotate.Z_AXIS);
+					rx.setAngle(0);
+					ry.setAngle(0);
+					rz.setAngle(0);
 					switch (event.getCode()) {
 					case UP:
-						rxBox.setAngle(3);
-						System.out.println("UP");
+						rx.setAngle(3);
 						break;
 					case DOWN:
-						rxBox.setAngle(-3);
-						System.out.println("DOWN");
+						rx.setAngle(-3);
 						break;
 					case LEFT:
-						ryBox.setAngle(3);
-						System.out.println("LEFT");
+						ry.setAngle(3);
 						break;
 					case RIGHT:
-						ryBox.setAngle(-3);
-						System.out.println("RIGHT");
+						ry.setAngle(-3);
 						break;
 					case COMMA:
-						rzBox.setAngle(3);
-						System.out.println("COMMA");
+						rz.setAngle(3);
 						break;
 					case PERIOD:
-						rzBox.setAngle(-3);
-						System.out.println("PERIOD");
+						rz.setAngle(-3);
 						break;
 					}
-					meshViewFinal.getTransforms().addAll(rxBox, ryBox, rzBox);
+					meshViewFinal.getTransforms().addAll(rx, ry, rz);
 				}
 			});
 		}

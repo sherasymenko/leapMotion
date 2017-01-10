@@ -99,7 +99,7 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 		}
 		if (hand != null) {
 			hand.update(LeapApp.getController().frame().hand(handId));
-			collisionDetector.checkCollisionWithObjects(hand, meshViewTable, scene, group);
+			collisionDetector.checkCollisionWithLoadObjects(hand, meshViewTable, scene);
 		}
 	}
 
@@ -174,7 +174,7 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 		}
 		stlImporter.close();
 		// dla każdego obiektu jest ustawiane położenie oraz jest on dodawany do
-		// głównej grupy
+		// głównej grupy, na podstawie której jest tworzona scena
 		for (int i = 0; i < meshViewTable.size(); i++) {
 			MeshView m = meshViewTable.get(i);
 			m.setTranslateZ(-100);

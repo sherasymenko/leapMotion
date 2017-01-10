@@ -137,7 +137,6 @@ public class StartDefaultScene extends Application implements PointMotionListene
 			hand = new HandFX3D(handId);
 			hands.put(handId, hand);
 			hand.setTranslateZ(-50);
-
 			group.getChildren().add(hand);
 		}
 		if (hand != null) {
