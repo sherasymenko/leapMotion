@@ -161,7 +161,6 @@ public final class NativeLibrary {
 			fieldSysPath.setAccessible(true);
 			fieldSysPath.set(null, null);
 		} catch (Exception ex) {
-			// no chance :(
 		}
 	}
 }

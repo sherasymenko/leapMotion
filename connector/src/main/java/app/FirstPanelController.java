@@ -15,11 +15,13 @@ public class FirstPanelController {
 		System.exit(0);
 	}
 
+	// włącznie sceny z wgranymi objektami
 	@FXML
 	void onLoad() throws Exception {
 		mainScenView.launchSceneWithLoadObjects();
 	}
 
+	// włączenie domyślnej sceny
 	@FXML
 	void onStart() throws Exception {
 		mainScenView.launchDefaultScene();

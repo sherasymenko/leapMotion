@@ -22,7 +22,7 @@ import javafx.scene.transform.Rotate;
 @SuppressWarnings("restriction")
 public class HandFX3D extends Group {
 
-	// poszczegolne czesci reki
+	// poszczególne części ręki
 	private Sphere palm;
 	private Sphere metacarpal;
 	private Sphere[] fingers = new Sphere[5];
@@ -36,9 +36,9 @@ public class HandFX3D extends Group {
 
 	private List<JointFX3D> joints = new ArrayList<JointFX3D>();
 
-	// tworzenie reki: na miejscu kostek sa tworzone kule,
-	// ktore sa polaczone cylindrami,
-	// co upodabnia wyglad konstrukcji do reki
+	// tworzenie ręki: na miejscu kostek są tworzone kule,
+	// które są połączone cylindrami,
+	// co upodabnia wygląd konstrukcji do ręki
 	public HandFX3D(int handId) {
 		palm = createSphere();
 		metacarpal = createSphere();
@@ -87,7 +87,7 @@ public class HandFX3D extends Group {
 
 	}
 
-	// metoda aktualizuje polozenie reki
+	// metoda aktualizuje położenie ręki
 	public void update(Hand hand) {
 		transform(palm, hand.palmPosition());
 		Iterator<Finger> itFinger = hand.fingers().iterator();
@@ -115,7 +115,8 @@ public class HandFX3D extends Group {
 		node.setTranslateZ(-vector.getZ());
 	}
 
-	// laczenie czesci
+	// łączenie części
+	@SuppressWarnings("unused")
 	private class JointFX3D {
 		private Sphere fromSphere;
 		private Sphere toSphere;
@@ -159,7 +160,6 @@ public class HandFX3D extends Group {
 			if (!visible) {
 				setInvisibleBone(bone);
 			}
-
 		}
 
 		public Sphere getFromSphere() {

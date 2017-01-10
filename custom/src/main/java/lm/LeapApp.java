@@ -20,7 +20,7 @@ public final class LeapApp {
 	private Controller controller;
 	private Mode mode;
 	private int displayWidth;
-	private int displayHeight;	
+	private int displayHeight;
 	private int maximumHandNumber;
 	private int minimumHandNumber;
 

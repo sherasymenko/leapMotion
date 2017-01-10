@@ -8,9 +8,7 @@
 		<artifactId>LeapMotionProject</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>LeapMotionProject</groupId>
 	<artifactId>load_objects</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>load_objects</name>
 	<url>http://maven.apache.org</url>
 	<properties>

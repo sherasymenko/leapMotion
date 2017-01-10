@@ -75,7 +75,6 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 
 	// metoda umożliwiająca działanie animacji, czyli płynna zmiana pozycji rąk
 	// w czasie
-
 	private void synchronizeWithLeapMotion() {
 		Timeline timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
@@ -127,6 +126,7 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 		scene.setCamera(camera);
 	}
 
+	// obracanie sceny za pomocą myszki
 	private void mouseSetting() {
 		scene.setOnMousePressed((MouseEvent me) -> {
 			mousePosX = me.getSceneX();
@@ -149,15 +149,17 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 		});
 	}
 
+	// wgrywanie objektów do sceny
 	@SuppressWarnings("deprecation")
 	private void addObjectsToGroup() throws IOException {
 		StlMeshImporter stlImporter = new StlMeshImporter();
+		// pobieranie folderu z obiektami
 		final File nativeDir = new File("resources/stl/");
+		// pobieranie obiektów
 		final File[] nativeFiles = nativeDir.listFiles();
+		// wczytywanie każdego obiektu
 		for (File fileName : nativeFiles) {
 			try {
-				System.out.println("toURI " + fileName.toURL());
-				System.out.println("getName " + fileName.getName());
 				stlImporter.read(fileName.toURL());
 			} catch (ImportException e) {
 				e.printStackTrace();
@@ -165,11 +167,14 @@ public class LoadObjectsScene extends Application implements PointMotionListener
 			}
 			TriangleMesh mesh = stlImporter.getImport();
 			MeshView meshView = new MeshView(mesh);
+			// ustawianie początkowego położenia
 			meshView.getTransforms().addAll(rotateX, rotateY, rotateZ, new Translate(0, 0, 0));
+			// dodawanie obiektu do listy wgranych obiektów
 			meshViewTable.add(meshView);
 		}
 		stlImporter.close();
-
+		// dla każdego obiektu jest ustawiane położenie oraz jest on dodawany do
+		// głównej grupy
 		for (int i = 0; i < meshViewTable.size(); i++) {
 			MeshView m = meshViewTable.get(i);
 			m.setTranslateZ(-100);

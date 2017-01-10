@@ -13,9 +13,9 @@ public class MainScenView extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
-		System.out.print("Main work");
 	}
 
+	// uruchomienie pierwszego okna aplikacji
 	@Override
 	public void start(Stage ps) throws Exception {
 		primaryStage = ps;
@@ -30,12 +30,14 @@ public class MainScenView extends Application {
 		ps.show();
 	}
 
+	// włączenie domyślnej sceny
 	public void launchDefaultScene() throws Exception {
 		StartDefaultScene defaultScene = new StartDefaultScene();
 		defaultScene.start(primaryStage);
 		stop();
 	}
 
+	// włącznie sceny z wgranymi objektami
 	public void launchSceneWithLoadObjects() throws Exception {
 		LoadObjectsScene loadObjectsScene = new LoadObjectsScene();
 		loadObjectsScene.start(primaryStage);

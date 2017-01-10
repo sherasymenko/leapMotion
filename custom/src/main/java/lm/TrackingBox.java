@@ -13,7 +13,7 @@ public class TrackingBox {
 				-(iBox.height() / 2) + iBox.center().getY(), -(iBox.depth() / 2) - iBox.center().getZ());
 		DEFAULT_BOX = new Vector(iBox.width(), iBox.height(), iBox.depth());
 	}
-	
+
 	private Vector box;
 	private Vector origin;
 	private Vector centroid;

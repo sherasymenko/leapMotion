@@ -130,7 +130,6 @@ public class StartDefaultScene extends Application implements PointMotionListene
 	public void pointMoved(PointEvent event) {
 		int handId = event.getSource().id();
 		HandFX3D hand = hands.get(handId);
-
 		if (event.leftViewPort()) {
 			hands.remove(handId);
 			group.getChildren().remove(hand);
@@ -145,7 +144,7 @@ public class StartDefaultScene extends Application implements PointMotionListene
 			hand.update(LeapApp.getController().frame().hand(handId));
 			collisionDetector.checkCollisionWithObject(hand, sphere, floor, box);
 			collisionDetector.checkCollisionWithObject(hand, box, floor, sphere);
-			collisionDetector.checkCollisionWithBoxAndSphere(box, sphere);
+			//collisionDetector.checkCollisionWithBoxAndSphere(box, sphere);
 			collisionDetector.setObjectInsideRoom(box, floor, leftWall, rightWall, middleWall);
 			collisionDetector.setObjectInsideRoom(sphere, floor, leftWall, rightWall, middleWall);
 		}
